@@ -86,3 +86,24 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"Msg by {self.sender.username} in Conv {self.conversation.id} at {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
+
+class Game(models.Model):
+    CATEGORY_CHOICES = [
+        ('HTML5', 'HTML5 Game'),
+        ('ESPORTS', 'eSports Info/Link'),
+        ('INSTANT', 'Instant Game'),
+    ]
+    name = models.CharField(max_length=200, unique=True)
+    description = models.TextField(blank=True)
+    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default='HTML5')
+    game_url = models.URLField(max_length=1024, help_text="Link to play/embed the game, or for eSports info page.")
+    thumbnail_url = models.URLField(max_length=1024, blank=True, null=True, help_text="Link to a thumbnail image for the game.")
+    is_featured = models.BooleanField(default=False, help_text="Feature this game on special sections like homepage.")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.name

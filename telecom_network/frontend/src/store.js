@@ -1,14 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './features/auth/authSlice';
 import connectionReducer from './features/connection/connectionSlice';
-import postReducer from './features/post/postSlice'; // New import
+import postReducer from './features/post/postSlice';
+import gameReducer from './features/game/gameSlice'; // New import
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     connections: connectionReducer,
-    posts: postReducer, // Add new reducer
+    posts: postReducer,
+    games: gameReducer, // Add new reducer
   },
-  // Optional: configure middleware for development (e.g., logger)
-  // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });

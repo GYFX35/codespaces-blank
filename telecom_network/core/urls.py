@@ -3,7 +3,8 @@ from .views import (
     RegisterView, ProfileDetailView,
     UserListView, SendConnectionRequestView, PendingConnectionListView, SentPendingConnectionListView,
     ConnectionActionView, AcceptedConnectionListView,
-    PostListCreateView # Add PostListCreateView
+    PostListCreateView,
+    GameListView, GameDetailView # Add Game views
 )
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -28,4 +29,8 @@ urlpatterns = [
 
     # Posts
     path('posts/', PostListCreateView.as_view(), name='post_list_create'),
+
+    # Games
+    path('games/', GameListView.as_view(), name='game-list'),
+    path('games/<int:pk>/', GameDetailView.as_view(), name='game-detail'),
 ]

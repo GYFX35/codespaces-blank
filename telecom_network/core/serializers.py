@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Profile, Connection, Post, Conversation, ChatMessage # Add Conversation, ChatMessage
+from .models import Profile, Connection, Post, Conversation, ChatMessage, Game # Add Game
 
 # Basic user representation, used in other serializers
 class BasicUserSerializer(serializers.ModelSerializer):
@@ -156,3 +156,8 @@ class ConversationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Conversation
         fields = ('id', 'participants', 'created_at', 'updated_at') # Add 'last_message', 'unread_count' later
+
+class GameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Game
+        fields = ('id', 'name', 'description', 'category', 'game_url', 'thumbnail_url', 'is_featured', 'created_at', 'updated_at')

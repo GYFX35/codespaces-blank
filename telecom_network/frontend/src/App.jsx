@@ -7,8 +7,10 @@ import Profile from './components/Profile';
 import UsersListPage from './pages/UsersListPage';
 import ConnectionRequestsPage from './pages/ConnectionRequestsPage';
 import MyConnectionsPage from './pages/MyConnectionsPage';
-import PostsFeedPage from './pages/PostsFeedPage'; // New import
-import { logout, getProfile } from './features/auth/authSlice'; // Removed 'reset' as it's not used here
+import PostsFeedPage from './pages/PostsFeedPage';
+import GamesPage from './pages/GamesPage'; // Added
+import PlayGamePage from './pages/PlayGamePage'; // Added
+import { logout, getProfile } from './features/auth/authSlice';
 import authService from './services/authService';
 
 function Navbar() {
@@ -31,6 +33,7 @@ function Navbar() {
             <li><Link to="/connections/pending">Pending Requests</Link></li>
             <li><Link to="/my-connections">My Connections</Link></li>
             <li><Link to="/feed">Feed</Link></li>
+            <li><Link to="/games">Games</Link></li>
             <li><button onClick={handleLogout} disabled={isLoading}>Logout</button></li>
           </>
         ) : (
@@ -57,14 +60,9 @@ function PrivateRoute({ children }) {
 
 function App() {
   const dispatch = useDispatch();
-  // user object from auth state is used to check if profile needs fetching.
-  // token presence is checked by authSlice initial state load from localStorage.
   const { token, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    // If there's a token (meaning user was logged in) but no user details in state, fetch profile.
-    // authService.setAuthToken(token) is called by authService itself when it loads,
-    // or after login by the login thunk.
     if (token && !user) {
       dispatch(getProfile());
     }
@@ -74,50 +72,38 @@ function App() {
     <Router>
       <div>
         <Navbar />
-        <div style={{padding: '20px'}}> {/* Added a general padding for content area */}
+        <div style={{padding: '20px'}}>
           <h1>React Frontend for Telecom Network</h1>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route
               path="/profile/me"
-              element={
-                <PrivateRoute>
-                  <Profile />
-                </PrivateRoute>
-              }
+              element={<PrivateRoute><Profile /></PrivateRoute>}
             />
             <Route
               path="/users"
-              element={
-                <PrivateRoute>
-                  <UsersListPage />
-                </PrivateRoute>
-              }
+              element={<PrivateRoute><UsersListPage /></PrivateRoute>}
             />
             <Route
               path="/connections/pending"
-              element={
-                <PrivateRoute>
-                  <ConnectionRequestsPage />
-                </PrivateRoute>
-              }
+              element={<PrivateRoute><ConnectionRequestsPage /></PrivateRoute>}
             />
             <Route
               path="/my-connections"
-              element={
-                <PrivateRoute>
-                  <MyConnectionsPage />
-                </PrivateRoute>
-              }
+              element={<PrivateRoute><MyConnectionsPage /></PrivateRoute>}
             />
             <Route
               path="/feed"
-              element={
-                <PrivateRoute>
-                  <PostsFeedPage />
-                </PrivateRoute>
-              }
+              element={<PrivateRoute><PostsFeedPage /></PrivateRoute>}
+            />
+            <Route
+              path="/games"
+              element={<PrivateRoute><GamesPage /></PrivateRoute>}
+            />
+            <Route
+              path="/games/play/:gameId"
+              element={<PrivateRoute><PlayGamePage /></PrivateRoute>}
             />
             <Route path="/" element={<div><h2>Welcome!</h2><p>This is the homepage. Current user: {user ? user.username : 'Guest'}</p></div>} />
             <Route path="*" element={<Navigate to="/" replace />} />
