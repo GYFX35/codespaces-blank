@@ -58,3 +58,31 @@ class Post(models.Model):
 
     def __str__(self):
         return f"Post by {self.user.username} at {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+
+class Conversation(models.Model):
+    participants = models.ManyToManyField(User, related_name='conversations')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-updated_at'] # Show most recent conversations first
+
+    def __str__(self):
+        participant_names = ", ".join([p.username for p in self.participants.all()])
+        # Limit length of participant names string for admin display if too long
+        if len(participant_names) > 50:
+            participant_names = participant_names[:47] + "..."
+        return f"Conversation {self.id} ({participant_names})"
+
+class ChatMessage(models.Model):
+    conversation = models.ForeignKey(Conversation, related_name='messages', on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, related_name='sent_chat_messages', on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    read_at = models.DateTimeField(null=True, blank=True) # For read receipts
+
+    class Meta:
+        ordering = ['timestamp'] # Messages in a conversation ordered oldest to newest
+
+    def __str__(self):
+        return f"Msg by {self.sender.username} in Conv {self.conversation.id} at {self.timestamp.strftime('%Y-%m-%d %H:%M')}"

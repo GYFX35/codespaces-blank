@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Profile, Connection, Post # Ensure Post is imported
+from .models import Profile, Connection, Post, Conversation, ChatMessage # Add Conversation, ChatMessage
 
 # Basic user representation, used in other serializers
 class BasicUserSerializer(serializers.ModelSerializer):
@@ -135,3 +135,24 @@ class PostSerializer(serializers.ModelSerializer):
         # 'user' is set in the view during creation, so it's effectively read-only from client perspective at create.
         # 'content' is the primary writable field by the client.
         read_only_fields = ('id', 'created_at', 'updated_at', 'user') # user is added here as it's set by perform_create
+
+class ChatMessageSerializer(serializers.ModelSerializer):
+    sender = BasicUserSerializer(read_only=True)
+    # conversation field is an ID, usually handled by view/URL, not directly in create payload here.
+
+    class Meta:
+        model = ChatMessage
+        fields = ('id', 'conversation', 'sender', 'content', 'timestamp', 'read_at')
+        # For creation via DRF endpoint (not WebSocket consumer directly):
+        # 'content' is main input. 'conversation' from URL. 'sender' from request.user.
+        read_only_fields = ('id', 'sender', 'timestamp', 'read_at', 'conversation')
+        # Making 'conversation' read-only here as it's typically set via URL in DRF views for messages.
+
+class ConversationSerializer(serializers.ModelSerializer):
+    participants = BasicUserSerializer(many=True, read_only=True)
+    # last_message = ChatMessageSerializer(read_only=True) # Example: for future enhancement
+    # unread_count = serializers.IntegerField(read_only=True) # Example: for future enhancement
+
+    class Meta:
+        model = Conversation
+        fields = ('id', 'participants', 'created_at', 'updated_at') # Add 'last_message', 'unread_count' later
