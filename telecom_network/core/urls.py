@@ -5,7 +5,8 @@ from .views import (
     ConnectionActionView, AcceptedConnectionListView,
     PostListCreateView,
     GameListView, GameDetailView,
-    AffiliateItemListView # Add AffiliateItemListView
+    AffiliateItemListView,
+    ActiveBankingDetailsView # Add ActiveBankingDetailsView
 )
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -37,4 +38,7 @@ urlpatterns = [
 
     # Affiliate Items
     path('affiliate-items/', AffiliateItemListView.as_view(), name='affiliateitem-list'),
+
+    # Platform Owner Banking Details
+    path('platform-banking-details/', ActiveBankingDetailsView.as_view(), name='active_banking_details'),
 ]

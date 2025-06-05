@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.exceptions import ValidationError # Added for OwnerBankingDetails model
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -107,6 +108,42 @@ class Game(models.Model):
 
     def __str__(self):
         return self.name
+
+class OwnerBankingDetails(models.Model):
+    bank_name = models.CharField(max_length=255, help_text="e.g., Equity Bank")
+    account_holder_name = models.CharField(max_length=255, help_text="e.g., John Doe")
+    account_number = models.CharField(max_length=100, help_text="e.g., 0123456789012")
+    swift_bic = models.CharField(max_length=20, blank=True, null=True, help_text="SWIFT/BIC code, e.g., EQBLKENAXXX")
+    iban = models.CharField(max_length=50, blank=True, null=True, help_text="IBAN, if applicable")
+    branch_info = models.CharField(max_length=255, blank=True, null=True, help_text="e.g., Main Branch, Nairobi")
+    payment_instructions = models.TextField(blank=True, help_text="e.g., 'Please use your GlobalMeetup username or email as the payment reference.'")
+    is_active = models.BooleanField(default=False, help_text="Enable this to make these details visible on the site. Only one set of details can be active at any time.")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) # Corrected typo here
+
+    class Meta:
+        verbose_name = "Owner Banking Detail"
+        verbose_name_plural = "Owner Banking Details"
+        ordering = ['-updated_at'] # Show most recently updated first in admin if multiple exist
+
+    def __str__(self):
+        status = 'Active' if self.is_active else 'Inactive'
+        return f"{self.bank_name} - {self.account_holder_name} ({status})"
+
+    def save(self, *args, **kwargs):
+        if self.is_active:
+            # Set all other records to is_active=False
+            OwnerBankingDetails.objects.filter(is_active=True).exclude(pk=self.pk).update(is_active=False)
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        # This validation is primarily for the Django Admin. The save() method is the ultimate enforcer.
+        if self.is_active:
+            queryset = OwnerBankingDetails.objects.filter(is_active=True)
+            if self.pk: # if this is an existing instance, exclude it from the count
+                queryset = queryset.exclude(pk=self.pk)
+            if queryset.exists():
+                raise ValidationError('Another set of banking details is already active. Please deactivate it first or uncheck "is_active" for this entry.')
 
 class AffiliateItem(models.Model):
     CATEGORY_CHOICES = [

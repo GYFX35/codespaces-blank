@@ -3,7 +3,8 @@ import authReducer from './features/auth/authSlice';
 import connectionReducer from './features/connection/connectionSlice';
 import postReducer from './features/post/postSlice';
 import gameReducer from './features/game/gameSlice';
-import affiliateItemsReducer from './features/affiliate/affiliateSlice'; // New import
+import affiliateItemsReducer from './features/affiliate/affiliateSlice';
+import platformInfoReducer from './features/platformInfo/platformInfoSlice'; // New import
 
 export const store = configureStore({
   reducer: {
@@ -11,10 +12,10 @@ export const store = configureStore({
     connections: connectionReducer,
     posts: postReducer,
     games: gameReducer,
-    affiliateItems: affiliateItemsReducer, // Add the new reducer
+    affiliateItems: affiliateItemsReducer,
+    platformInfo: platformInfoReducer, // Add the new reducer
   },
-  // Optional: configure middleware to disable serializableCheck if using non-serializable values
-  // (though not strictly needed for this slice as defined, as URLs are strings)
+  // Optional: configure middleware
   // middleware: (getDefaultMiddleware) => getDefaultMiddleware({
   //   serializableCheck: false,
   // }),

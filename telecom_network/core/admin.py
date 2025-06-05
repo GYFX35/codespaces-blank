@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Connection, Post, Conversation, ChatMessage, Game, AffiliateItem # Add AffiliateItem
+from .models import Profile, Connection, Post, Conversation, ChatMessage, Game, AffiliateItem, OwnerBankingDetails # Add OwnerBankingDetails
 
 # Register Profile model if not already registered
 if not admin.site.is_registered(Profile):
@@ -80,3 +80,21 @@ class AffiliateItemAdmin(admin.ModelAdmin):
         ('Control & Ordering', {'fields': ('is_active', 'display_priority')}),
         ('Timestamps', {'fields': ('created_at', 'updated_at'), 'classes': ('collapse',)}),
     )
+
+@admin.register(OwnerBankingDetails)
+class OwnerBankingDetailsAdmin(admin.ModelAdmin):
+    list_display = ('bank_name', 'account_holder_name', 'is_active', 'updated_at')
+    list_filter = ('is_active',)
+    search_fields = ('bank_name', 'account_holder_name', 'account_number', 'iban', 'swift_bic')
+    readonly_fields = ('created_at', 'updated_at')
+    fieldsets = (
+        (None, {'fields': ('bank_name', 'account_holder_name', 'account_number')}),
+        ('Optional International Details', {'fields': ('swift_bic', 'iban', 'branch_info'), 'classes': ('collapse',)}),
+        ('User Instructions & Activation', {'fields': ('payment_instructions', 'is_active'), 'description': "Ensure only one entry is marked as 'active'. Activating this one will deactivate any other currently active entry."}),
+        ('Timestamps', {'fields': ('created_at', 'updated_at'), 'classes': ('collapse',)}),
+    )
+    # To prevent adding more than one record if desired (though save method handles active status)
+    # def has_add_permission(self, request):
+    #     # Allow adding if no records exist, or if you want to allow multiple but only one active
+    #     # return OwnerBankingDetails.objects.count() == 0 # Strict: only one record ever
+    #     return True # Default: allow multiple records, model's save() handles active status

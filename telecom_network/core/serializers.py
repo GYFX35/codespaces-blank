@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Profile, Connection, Post, Conversation, ChatMessage, Game, AffiliateItem # Add AffiliateItem
+from .models import Profile, Connection, Post, Conversation, ChatMessage, Game, AffiliateItem, OwnerBankingDetails # Add OwnerBankingDetails
 
 # Basic user representation, used in other serializers
 class BasicUserSerializer(serializers.ModelSerializer):
@@ -169,4 +169,12 @@ class AffiliateItemSerializer(serializers.ModelSerializer):
             'id', 'name', 'description', 'affiliate_url',
             'image_url', 'category', 'is_active',
             'display_priority', 'created_at', 'updated_at'
+        )
+
+class OwnerBankingDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OwnerBankingDetails
+        fields = (
+            'bank_name', 'account_holder_name', 'account_number',
+            'swift_bic', 'iban', 'branch_info', 'payment_instructions'
         )
