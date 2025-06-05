@@ -107,3 +107,29 @@ class Game(models.Model):
 
     def __str__(self):
         return self.name
+
+class AffiliateItem(models.Model):
+    CATEGORY_CHOICES = [
+        ('SOFTWARE', 'Software'),
+        ('HARDWARE', 'Hardware'),
+        ('SERVICES', 'Services'),
+        ('TRAINING', 'Training & Courses'),
+        ('BOOKS', 'Books'),
+        ('OTHER', 'Other'),
+    ]
+
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(help_text="Brief description of the item or offer.")
+    affiliate_url = models.URLField(max_length=2048, help_text="The actual affiliate tracking link.")
+    image_url = models.URLField(max_length=2048, blank=True, null=True, help_text="URL of a promotional image.")
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='OTHER', db_index=True)
+    is_active = models.BooleanField(default=True, help_text="Only active items will be displayed to users.", db_index=True)
+    display_priority = models.IntegerField(default=0, help_text="Higher numbers display first. Used for ordering.", db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-display_priority', '-created_at']
+
+    def __str__(self):
+        return self.name

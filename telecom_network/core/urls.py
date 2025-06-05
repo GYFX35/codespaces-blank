@@ -4,7 +4,8 @@ from .views import (
     UserListView, SendConnectionRequestView, PendingConnectionListView, SentPendingConnectionListView,
     ConnectionActionView, AcceptedConnectionListView,
     PostListCreateView,
-    GameListView, GameDetailView # Add Game views
+    GameListView, GameDetailView,
+    AffiliateItemListView # Add AffiliateItemListView
 )
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -33,4 +34,7 @@ urlpatterns = [
     # Games
     path('games/', GameListView.as_view(), name='game-list'),
     path('games/<int:pk>/', GameDetailView.as_view(), name='game-detail'),
+
+    # Affiliate Items
+    path('affiliate-items/', AffiliateItemListView.as_view(), name='affiliateitem-list'),
 ]

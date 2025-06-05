@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Connection, Post, Conversation, ChatMessage, Game # Add Game and other models
+from .models import Profile, Connection, Post, Conversation, ChatMessage, Game, AffiliateItem # Add AffiliateItem
 
 # Register Profile model if not already registered
 if not admin.site.is_registered(Profile):
@@ -65,5 +65,18 @@ class GameAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         (None, {'fields': ('name', 'description', 'category', 'game_url', 'thumbnail_url', 'is_featured')}),
+        ('Timestamps', {'fields': ('created_at', 'updated_at'), 'classes': ('collapse',)}),
+    )
+
+@admin.register(AffiliateItem)
+class AffiliateItemAdmin(admin.ModelAdmin):
+    list_display = ('name', 'category', 'is_active', 'display_priority', 'created_at', 'updated_at')
+    list_filter = ('category', 'is_active')
+    search_fields = ('name', 'description', 'affiliate_url')
+    list_editable = ('is_active', 'display_priority')
+    readonly_fields = ('created_at', 'updated_at')
+    fieldsets = (
+        (None, {'fields': ('name', 'description', 'category', 'affiliate_url', 'image_url')}),
+        ('Control & Ordering', {'fields': ('is_active', 'display_priority')}),
         ('Timestamps', {'fields': ('created_at', 'updated_at'), 'classes': ('collapse',)}),
     )

@@ -8,8 +8,9 @@ import UsersListPage from './pages/UsersListPage';
 import ConnectionRequestsPage from './pages/ConnectionRequestsPage';
 import MyConnectionsPage from './pages/MyConnectionsPage';
 import PostsFeedPage from './pages/PostsFeedPage';
-import GamesPage from './pages/GamesPage'; // Added
-import PlayGamePage from './pages/PlayGamePage'; // Added
+import GamesPage from './pages/GamesPage';
+import PlayGamePage from './pages/PlayGamePage';
+import PartnerOffersPage from './pages/PartnerOffersPage'; // Added import
 import { logout, getProfile } from './features/auth/authSlice';
 import authService from './services/authService';
 
@@ -34,6 +35,7 @@ function Navbar() {
             <li><Link to="/my-connections">My Connections</Link></li>
             <li><Link to="/feed">Feed</Link></li>
             <li><Link to="/games">Games</Link></li>
+            <li><Link to="/partner-offers">Partner Offers</Link></li> {/* Added link */}
             <li><button onClick={handleLogout} disabled={isLoading}>Logout</button></li>
           </>
         ) : (
@@ -77,34 +79,14 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route
-              path="/profile/me"
-              element={<PrivateRoute><Profile /></PrivateRoute>}
-            />
-            <Route
-              path="/users"
-              element={<PrivateRoute><UsersListPage /></PrivateRoute>}
-            />
-            <Route
-              path="/connections/pending"
-              element={<PrivateRoute><ConnectionRequestsPage /></PrivateRoute>}
-            />
-            <Route
-              path="/my-connections"
-              element={<PrivateRoute><MyConnectionsPage /></PrivateRoute>}
-            />
-            <Route
-              path="/feed"
-              element={<PrivateRoute><PostsFeedPage /></PrivateRoute>}
-            />
-            <Route
-              path="/games"
-              element={<PrivateRoute><GamesPage /></PrivateRoute>}
-            />
-            <Route
-              path="/games/play/:gameId"
-              element={<PrivateRoute><PlayGamePage /></PrivateRoute>}
-            />
+            <Route path="/profile/me" element={<PrivateRoute><Profile /></PrivateRoute>} />
+            <Route path="/users" element={<PrivateRoute><UsersListPage /></PrivateRoute>} />
+            <Route path="/connections/pending" element={<PrivateRoute><ConnectionRequestsPage /></PrivateRoute>} />
+            <Route path="/my-connections" element={<PrivateRoute><MyConnectionsPage /></PrivateRoute>} />
+            <Route path="/feed" element={<PrivateRoute><PostsFeedPage /></PrivateRoute>} />
+            <Route path="/games" element={<PrivateRoute><GamesPage /></PrivateRoute>} />
+            <Route path="/games/play/:gameId" element={<PrivateRoute><PlayGamePage /></PrivateRoute>} />
+            <Route path="/partner-offers" element={<PrivateRoute><PartnerOffersPage /></PrivateRoute>} /> {/* Added route */}
             <Route path="/" element={<div><h2>Welcome!</h2><p>This is the homepage. Current user: {user ? user.username : 'Guest'}</p></div>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

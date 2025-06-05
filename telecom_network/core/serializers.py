@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Profile, Connection, Post, Conversation, ChatMessage, Game # Add Game
+from .models import Profile, Connection, Post, Conversation, ChatMessage, Game, AffiliateItem # Add AffiliateItem
 
 # Basic user representation, used in other serializers
 class BasicUserSerializer(serializers.ModelSerializer):
@@ -161,3 +161,12 @@ class GameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
         fields = ('id', 'name', 'description', 'category', 'game_url', 'thumbnail_url', 'is_featured', 'created_at', 'updated_at')
+
+class AffiliateItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AffiliateItem
+        fields = (
+            'id', 'name', 'description', 'affiliate_url',
+            'image_url', 'category', 'is_active',
+            'display_priority', 'created_at', 'updated_at'
+        )
