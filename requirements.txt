@@ -1,2 +1,5 @@
 Flask
 facebook_business
+requests
+beautifulsoup4
+pandas
