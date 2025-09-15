@@ -3,10 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facebook API Integration</title>
+    <title>Global Business Assistant</title>
+    <style>
+        body { font-family: sans-serif; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .tool-section { margin-bottom: 30px; }
+        #results { background-color: #f0f0f0; padding: 10px; border-radius: 5px; white-space: pre-wrap; }
+        #chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #chat-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        #chat-messages {
+            height: 200px;
+            overflow-y: scroll;
+            padding: 10px;
+        }
+        #chat-input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: none;
+            border-top: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello, World!</h1>
-    <p>This is the initial landing page.</p>
+    <div class="container">
+        <h1>Global Business Assistant</h1>
+
+        <div class="tool-section">
+            <h2>SEO Analysis</h2>
+            <form id="seo-form">
+                <input type="text" id="seo-url" placeholder="Enter URL" required>
+                <button type="submit">Analyze</button>
+            </form>
+        </div>
+
+        <div class="tool-section">
+            <h2>Data Analysis</h2>
+            <form id="data-form">
+                <input type="file" id="data-file" accept=".csv" required>
+                <button type="submit">Analyze</button>
+            </form>
+        </div>
+
+        <div class="tool-section">
+            <h2>Business Development</h2>
+            <button id="leads-btn">Get Business Leads</button>
+        </div>
+
+        <div class="tool-section">
+            <h2>Enhanced Facebook Ad Analytics</h2>
+            <button id="fb-analytics-btn">Get Ad Analytics</button>
+        </div>
+
+        <h2>Results</h2>
+        <pre id="results"></pre>
+    </div>
+
+    <div id="chat-container">
+        <div id="chat-header">AI Assistant</div>
+        <div id="chat-messages"></div>
+        <input type="text" id="chat-input" placeholder="Ask a question...">
+    </div>
+
+    <script>
+        document.getElementById('seo-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const url = document.getElementById('seo-url').value;
+            const response = await fetch(`/seo_analysis?url=${encodeURIComponent(url)}`);
+            const data = await response.json();
+            document.getElementById('results').textContent = JSON.stringify(data, null, 2);
+        });
+
+        document.getElementById('data-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const file = document.getElementById('data-file').files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/data_analysis', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            document.getElementById('results').textContent = JSON.stringify(data, null, 2);
+        });
+
+        document.getElementById('leads-btn').addEventListener('click', async () => {
+            const response = await fetch('/business_leads');
+            const data = await response.json();
+            document.getElementById('results').textContent = JSON.stringify(data, null, 2);
+        });
+
+        document.getElementById('fb-analytics-btn').addEventListener('click', async () => {
+            const response = await fetch('/enhanced_analytics');
+            const data = await response.json();
+            document.getElementById('results').textContent = JSON.stringify(data, null, 2);
+        });
+
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+
+        const botResponses = {
+            "hello": "Hi there! How can I help you?",
+            "what can you do": "I can help you with SEO analysis, data analysis, and finding business leads. Just use the tools on this page.",
+            "seo": "To analyze the SEO of a website, enter the URL in the 'SEO Analysis' section and click 'Analyze'.",
+            "data": "To analyze a CSV file, choose the file in the 'Data Analysis' section and click 'Analyze'.",
+            "leads": "To get a list of business leads, click the 'Get Business Leads' button.",
+            "analytics": "To get enhanced analytics for your Facebook ads, click the 'Get Ad Analytics' button.",
+            "default": "I'm not sure how to respond to that. Try asking about 'seo', 'data', 'leads', or 'analytics'."
+        };
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const userMessage = chatInput.value;
+                addMessage('user', userMessage);
+                chatInput.value = '';
+
+                const botMessage = getBotResponse(userMessage);
+                addMessage('bot', botMessage);
+            }
+        });
+
+        function addMessage(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.textContent = `${sender}: ${message}`;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function getBotResponse(message) {
+            const lowerCaseMessage = message.toLowerCase();
+            for (const keyword in botResponses) {
+                if (lowerCaseMessage.includes(keyword)) {
+                    return botResponses[keyword];
+                }
+            }
+            return botResponses['default'];
+        }
+
+        addMessage('bot', 'Hello! I am your business assistant.');
+    </script>
 </body>
 </html>
